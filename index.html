@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Structures Visualizer - Complete Suite</title>
+    <link rel="shortcut icon" href="favicon.avif" type="image/x-icon">
+     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;500&display=swap');
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+      body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+              background: linear-gradient(5deg, #000000 0%, #0c0c46 25%, #767980 50%, #2c4c73 75%, #28154b 100%);     overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+
+        .glass-morphism {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .neon-glow {
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5), 0 0 40px rgba(0, 255, 255, 0.3), 0 0 60px rgba(0, 255, 255, 0.1);
+        }
+
+        .neon-text {
+            text-shadow: 0 0 10px rgba(13, 26, 26, 0.8), 0 0 20px rgba(0, 255, 255, 0.5), 0 0 30px rgba(0, 255, 255, 0.3);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-30px); }
+            60% { transform: translateY(-15px); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+            20%, 40%, 60%, 80% { transform: translateX(10px); }
+        }
+
+        @keyframes glow {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.5); }
+        }
+
+        @keyframes particles {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+
+        .animate-float { animation: float 3s ease-in-out infinite; }
+        .animate-pulse-custom { animation: pulse 2s infinite; }
+        .animate-slide-in { animation: slideIn 0.5s ease-out; }
+        .animate-slide-out { animation: slideOut 0.5s ease-out; }
+        .animate-bounce-custom { animation: bounce 1s ease-in-out; }
+        .animate-shake { animation: shake 0.5s ease-in-out; }
+        .animate-glow { animation: glow 2s ease-in-out infinite; }
+
+        .particle {
+            position: absolute;
+            width: 1000px;
+            height: 1000px;
+            background: linear-gradient(45deg, #e1610c, #e966e9);
+            border-radius: 50%;
+            animation: particles linear infinite;
+        }
+
+        .stack-element {
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transform-style: preserve-3d;
+        }
+
+        .stack-element:hover {
+            transform: scale(1.05) rotateY(10deg);
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.4);
+        }
+
+        .node {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .node:hover {
+            transform: scale(1.1);
+            z-index: 10;
+        }
+
+        .arrow {
+            position: absolute;
+            width: 50px;
+            height: 2px;
+            background: linear-gradient(90deg, #00ffff, #ff00ff);
+            transform-origin: left center;
+            margin-left: -28px;
+        }
+
+        .arrow::after {
+            content: '';
+            position: absolute;
+            right: -10px;
+            top: -4px;
+            width: 0;
+            height: 0;
+            border-left: 10px solid #ff00ff;
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+        }
+
+        .queue-element {
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .ripple {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ripple::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .ripple:active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .nav-item {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.6s;
+        }
+
+        .nav-item:hover::before {
+            left: 100%;
+        }
+
+        @media (max-width: 768px) {
+            .glass-morphism {
+                backdrop-filter: blur(10px);
+            }
+        }
+
+        .typewriter {
+            overflow: hidden;
+            border-right: 2px solid #00ffff;
+            white-space: nowrap;
+            animation: typing 2s steps(40, end), blink-caret 0.75s step-end infinite;
+        }
+
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent; }
+            50% { border-color: #00ffff; }
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.1) 0%, rgba(255, 0, 255, 0.1) 100%);
+        }
+
+        .hover-scale {
+            transition: transform 0.3s ease;
+        }
+
+        .hover-scale:hover {
+            transform: scale(1.05);
+        }
+
+        .success-glow {
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.6);
+            animation: glow 1s ease-in-out;
+        }
+
+        .error-glow {
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.6);
+            animation: shake 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // Particle Background Component
+        const ParticleBackground = () => {
+            const [particles, setParticles] = useState([]);
+
+            useEffect(() => {
+                const newParticles = Array.from({ length: 50 }, (_, i) => ({
+                    id: i,
+                    left: Math.random() * 100,
+                    animationDuration: Math.random() * 10 + 10,
+                    animationDelay: Math.random() * 10,
+                    size: Math.random() * 3 + 1
+                }));
+                setParticles(newParticles);
+            }, []);
+
+            return (
+                <div className="fixed inset-0 pointer-events-none z-0">
+                    {particles.map(particle => (
+                        <div
+                            key={particle.id}
+                            className="particle"
+                            style={{
+                                left: `${particle.left}%`,
+                                animationDuration: `${particle.animationDuration}s`,
+                                animationDelay: `${particle.animationDelay}s`,
+                                width: `${particle.size}px`,
+                                height: `${particle.size}px`
+                            }}
+                        />
+                    ))}
+                </div>
+            );
+        };
+
+        // Navigation Component
+        const Navigation = ({ activeSection, setActiveSection, isMobileMenuOpen, setIsMobileMenuOpen }) => {
+            const navItems = [
+                { id: 'stack', name: 'Stack', icon: 'fas fa-layer-group' },
+                { id: 'linkedlist', name: 'Linked List', icon: 'fas fa-link' },
+                { id: 'queue', name: 'Queue', icon: 'fas fa-list-ol' }
+            ];
+
+            return (
+                <nav className="glass-morphism fixed top-0 left-0 right-0 z-50">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="flex items-center justify-between h-16 top-10">
+                            <div className="flex items-center">
+                                <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent mb-4">
+                                  DS-View
+                                </h1>
+                            </div>
+                            
+                            <div className="hidden md:block">
+                                <div className="ml-10 flex items-baseline space-x-4">
+                                    {navItems.map(item => (
+                                        <button
+                                            key={item.id}
+                                            onClick={() => setActiveSection(item.id)}
+                                            className={`nav-item px-4 py-2 rounded-lg transition-all duration-300 hover-scale ripple ${
+                                                activeSection === item.id
+                                                    ? 'bg-gradient-to-r from-cyan-500 to-purple-500 text-white neon-glow'
+                                                    : 'text-gray-300 hover:text-white hover:bg-white hover:bg-opacity-10'
+                                            }`}
+                                        >
+                                            <i className={`${item.icon} mr-2`}></i>
+                                            {item.name}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                            
+                            <div className="md:hidden">
+                                <button
+                                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                                    className="text-gray-300 hover:text-white focus:outline-none focus:text-white transition-colors duration-300"
+                                >
+                                    <i className={`fas ${isMobileMenuOpen ? 'fa-times' : 'fa-bars'} text-xl`}></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {isMobileMenuOpen && (
+                        <div className="md:hidden glass-morphism animate-slide-in">
+                            <div className="px-2 pt-2 pb-3 space-y-1">
+                                {navItems.map(item => (
+                                    <button
+                                        key={item.id}
+                                        onClick={() => {
+                                            setActiveSection(item.id);
+                                            setIsMobileMenuOpen(false);
+                                        }}
+                                        className={`nav-item block px-3 py-2 rounded-md text-base font-medium transition-all duration-300 w-full text-left ${
+                                            activeSection === item.id
+                                                ? 'bg-gradient-to-r from-cyan-500 to-purple-500 text-white neon-glow'
+                                                : 'text-gray-300 hover:text-white hover:bg-white hover:bg-opacity-10'
+                                        }`}
+                                    >
+                                        <i className={`${item.icon} mr-2`}></i>
+                                        {item.name}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </nav>
+            );
+        };
+
+        // Stack Component
+        const StackVisualizer = () => {
+            const [stack, setStack] = useState([]);
+            const [input, setInput] = useState('');
+            const [maxSize, setMaxSize] = useState(10);
+            const [message, setMessage] = useState('');
+            const [isAnimating, setIsAnimating] = useState(false);
+            const [history, setHistory] = useState([]);
+
+            const showMessage = (msg, type = 'info') => {
+                setMessage(msg);
+                setTimeout(() => setMessage(''), 3000);
+            };
+
+            const push = async () => {
+                if (input === '') {
+                    showMessage('Please enter a value!', 'error');
+                    return;
+                }
+                
+                if (stack.length >= maxSize) {
+                    showMessage('Stack Overflow! Stack is full.', 'error');
+                    return;
+                }
+
+                setIsAnimating(true);
+                const newElement = { value: parseInt(input), id: Date.now() };
+                setStack(prev => [...prev, newElement]);
+                setHistory(prev => [...prev, `PUSH: ${input}`]);
+                setInput('');
+                showMessage(`Pushed ${input} to stack`, 'success');
+                
+                setTimeout(() => setIsAnimating(false), 500);
+            };
+
+            const pop = async () => {
+                if (stack.length === 0) {
+                    showMessage('Stack Underflow! Stack is empty.', 'error');
+                    return;
+                }
+
+                setIsAnimating(true);
+                const popped = stack[stack.length - 1];
+                setStack(prev => prev.slice(0, -1));
+                setHistory(prev => [...prev, `POP: ${popped.value}`]);
+                showMessage(`Popped ${popped.value} from stack`, 'success');
+                
+                setTimeout(() => setIsAnimating(false), 500);
+            };
+
+            const peek = () => {
+                if (stack.length === 0) {
+                    showMessage('Stack is empty! Cannot peek.', 'error');
+                    return;
+                }
+                
+                showMessage(`Top element: ${stack[stack.length - 1].value}`, 'info');
+            };
+
+            const clear = () => {
+                setStack([]);
+                setHistory(prev => [...prev, 'CLEAR: Stack cleared']);
+                showMessage('Stack cleared!', 'info');
+            };
+
+            return (
+                <div className="p-6 space-y-6">
+                    <div className="text-center mb-8">
+                        <h2 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent mb-4">Stack Visualizer</h2>
+                        <p className="text-gray-300 font-semibold">Last In, First Out (LIFO)  Data Structure</p>
+                    </div>
+
+                    <div className="grid lg:grid-cols-3 gap-6">
+                        {/* Controls */}
+                        <div className="glass-morphism rounded-xl p-6 hover-scale">
+                          <h3 className="text-xl font-semibold text-yellow-300 mb-5 ">Controls</h3>
+
+                            
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-gray-300 mb-2">Value to Push:</label>
+                                    <input
+                                        type="number"
+                                        value={input}
+                                        onChange={(e) => setInput(e.target.value)}
+                                        onKeyPress={(e) => e.key === 'Enter' && push()}
+                                        className="w-full px-4 py-2 bg-black bg-opacity-50 border border-cyan-400 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                                        placeholder="Enter number..."
+                                    />
+                                </div>
+                                
+                                <div>
+                                    <label className="block text-gray-300 mb-2">Max Size:</label>
+                                    <input
+                                        type="number"
+                                        value={maxSize}
+                                        onChange={(e) => setMaxSize(parseInt(e.target.value) || 10)}
+                                        className="w-full px-4 py-2 bg-black bg-opacity-50 border border-purple-400 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-400"
+                                        min="1"
+                                        max="20"
+                                    />
+                                </div>
+                                
+                                <div className="grid grid-cols-2 gap-2">
+                                    <button
+                                        onClick={push}
+                                        disabled={isAnimating}
+                                        className="ripple bg-gradient-to-r from-green-500 to-cyan-500 text-white px-4 py-2 rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-300 disabled:opacity-50"
+                                    >
+                                        <i className="fas fa-plus mr-2"></i>Push
+                                    </button>
+                                    <button
+                                        onClick={pop}
+                                        disabled={isAnimating}
+                                        className="ripple bg-gradient-to-r from-red-500 to-pink-500 text-white px-4 py-2 rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-300 disabled:opacity-50"
+                                    >
+                                        <i className="fas fa-minus mr-2"></i>Pop
+                                    </button>
+                                </div>
+                                
+                                <div className="grid grid-cols-2 gap-2">
+                                    <button
+                                        onClick={peek}
+                                        className="ripple bg-gradient-to-r from-blue-500 to-purple-500 text-white px-4 py-2 rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-300"
+                                    >
+                                        <i className="fas fa-eye mr-2"></i>Peek
+                                    </button>
+                                    <button
+                                        onClick={clear}
+                                        className="ripple bg-gradient-to-r from-gray-500 to-gray-700 text-white px-4 py-2 rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-300"
+                                    >
+                                        <i className="fas fa-trash mr-2"></i>Clear
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Stack Visualization */}
+                        <div className="glass-morphism rounded-xl p-6 hover-scale">
+                            <h3  className="text-yellow-300 font-semibold">Stack Visualization</h3>
+                            
+                            <div className="relative">
+                                <div className="flex flex-col-reverse items-center space-y-reverse space-y-2 min-h-96">
+                                    {stack.map((element, index) => (
+                                        <div
+                                            key={element.id}
+                                            className={`stack-element w-24 h-12 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-lg flex items-center justify-center text-white font-bold border-2 border-cyan-300 ${
+                                                index === stack.length - 1 ? 'animate-pulse-custom neon-glow' : ''
+                                            } ${isAnimating && index === stack.length - 1 ? 'animate-bounce-custom' : ''}`}
+                                            style={{
+                                                transform: `perspective(500px) rotateX(${index * 2}deg) translateZ(${index * 5}px)`,
+                                            }}
+                                        >
+                                            {element.value}
+                                        </div>
+                                    ))}
+                                </div>
+                                
+                                {stack.length > 0 && (
+                                    <div className="absolute -right-16 flex flex-col-reverse items-center space-y-reverse space-y-2">
+                                        <div className="text-cyan-400 font-bold bg-black bg-opacity-70 px-2 py-1 rounded-lg">
+                                            <i className="fas fa-arrow-left mr-2"></i>TOP
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                            
+                            <div className="mt-4 text-center">
+                                <div className="text-gray-300">
+                                    Size: <span className="text-cyan-400 font-bold">{stack.length}</span> / {maxSize}
+                                </div>
+                                <div className="w-full bg-gray-700 rounded-full h-2 mt-2">
+                                    <div 
+                                        className="bg-gradient-to-r from-cyan-400 to-purple-500 h-2 rounded-full transition-all duration-500"
+                                        style={{ width: `${(stack.length / maxSize) * 100}%` }}
+                                    ></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Status & History */}
+                        <div className="space-y-6">
+                            <div className="glass-morphism rounded-xl p-6 hover-scale">
+                                  <h3 className="text-xl font-semibold text-yellow-300 mb-5 ">Status</h3>
+                                <div className="space-y-2 text-sm">
+                                    <div className={`p-2 rounded ${stack.length === 0 ? 'bg-blue-900 text-blue-300' : 'bg-green-900 text-green-300'}`}>
+                                        {stack.length === 0 ? 'Empty' : 'Has Elements'}
+                                    </div>
+                                    <div className={`p-2 rounded ${stack.length >= maxSize ? 'bg-red-900 text-red-300' : 'bg-green-900 text-green-300'}`}>
+                                        {stack.length >= maxSize ? 'Full' : 'Space Available'}
+                                    </div>
+                                </div>
+                                
+                                {message && (
+                                    <div className="mt-4 p-3 rounded-lg bg-cyan-900 bg-opacity-50 text-cyan-300 border border-cyan-400 animate-pulse-custom">
+                                        {message}
+                                    </div>
+                                )}
+                            </div>
+                            
+                            <div className="glass-morphism rounded-xl p-6 hover-scale">
+                                <h3 className="text-xl font-semibold text-purple-400 mb-4">Operation History</h3>
+                                <div className="max-h-48 overflow-y-auto space-y-1">
+                                    {history.slice(-10).reverse().map((operation, index) => (
+                                        <div key={index} className="text-sm text-gray-300 p-2 bg-black bg-opacity-30 rounded">
+                                            {operation}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // LinkedList Component
+        const LinkedListVisualizer = () => {
+            const [list, setList] = useState([]);
+            const [input, setInput] = useState('');
+            const [position, setPosition] = useState(0);
+            const [message, setMessage] = useState('');
+            const [isAnimating, setIsAnimating] = useState(false);
+            const [history, setHistory] = useState([]);
+            const [highlightedNode, setHighlightedNode] = useState(null);
+
+            const showMessage = (msg, type = 'info') => {
+                setMessage(msg);
+                setTimeout(() => setMessage(''), 3000);
+            };
+
+            const insertAtBeginning = async () => {
+                if (input === '') {
+                    showMessage('Please enter a value!', 'error');
+                    return;
+                }
+
+                setIsAnimating(true);
+                const newNode = { value: parseInt(input), id: Date.now() };
+                setList(prev => [newNode, ...prev]);
+                setHistory(prev => [...prev, `INSERT_BEGIN: ${input}`]);
+                setInput('');
+                showMessage(`Inserted ${input} at beginning`, 'success');
+                
+                setTimeout(() => setIsAnimating(false), 500);
+            };
+
+            const insertAtEnd = async () => {
+                if (input === '') {
+                    showMessage('Please enter a value!', 'error');
+                    return;
+                }
+
+                setIsAnimating(true);
+                const newNode = { value: parseInt(input), id: Date.now() };
+                setList(prev => [...prev, newNode]);
+                setHistory(prev => [...prev, `INSERT_END: ${input}`]);
+                setInput('');
+                showMessage(`Inserted ${input} at end`, 'success');
+                
+                setTimeout(() => setIsAnimating(false), 500);
+            };
+
+            const insertAtPosition = async () => {
+                if (input === '' || position < 0 || position > list.length) {
+                    showMessage('Invalid input or position!', 'error');
+                    return;
+                }
+
+                setIsAnimating(true);
+                const newNode = { value: parseInt(input), id: Date.now() };
+                const newList = [...list];
+                newList.splice(position, 0, newNode);
+                setList(newList);
+                setHistory(prev => [...prev, `INSERT_POS: ${input} at ${position}`]);
+                setInput('');
+                showMessage(`Inserted ${input} at position ${position}`, 'success');
+                
+                setTimeout(() => setIsAnimating(false), 500);
+            };
+
+            const deleteByValue = async () => {
+                if (input === '') {
+                    showMessage('Please enter a value!', 'error');
+                    return;
+                }
+
+                const value = parseInt(input);
+                const index = list.findIndex(node => node.value === value);
+                
+                if (index === -1) {
+                    showMessage(`Value ${value} not found!`, 'error');
+                    return;
+                }
+
+                setHighlightedNode(index);
+                setTimeout(() => {
+                    setList(prev => prev.filter(node => node.value !== value));
+                    setHistory(prev => [...prev, `DELETE: ${value}`]);
+                    setInput('');
+                    showMessage(`Deleted ${value} from list`, 'success');
+                    setHighlightedNode(null);
+                }, 1000);
+            };
+
+            const search = (searchValue) => {
+                if (searchValue === '') {
+                    showMessage('Please enter a value to search!', 'error');
+                    return;
+                }
+
+                const value = parseInt(searchValue);
+                const index = list.findIndex(node => node.value === value);
+                
+                if (index !== -1) {
+                    setHighlightedNode(index);
+                    showMessage(`Found ${value} at position ${index}`, 'success');
+                    setTimeout(() => setHighlightedNode(null), 3000);
+                } else {
+                    showMessage(`Value ${value} not found!`, 'error');
+                }
+            };
+
+            const clear = () => {
+                setList([]);
+                setHistory(prev => [...prev, 'CLEAR: List cleared']);
+                showMessage('List cleared!', 'info');
+            };
+
+            return (
+                <div className="p-6 space-y-6">
+                    <div className="text-center mb-8">
+                        <h2 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent mb-4">Linked List Visualizer</h2>
+                        <p className="text-gray-300 font-semibold">Dynamic Linear Data Structure with Node Connections</p>
+                    </div>
+
+                    <div className="grid lg:grid-cols-4 gap-6">
+                        {/* Controls */}
+                        <div className="glass-morphism rounded-xl p-6 hover-scale">
+                              <h3 className="text-xl font-semibold text-yellow-300 mb-5 ">Controls</h3>
+                            
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-gray-300 mb-2">Value:</label>
+                                    <input
+                                        type="number"
+                                        value={input}
+                                        onChange={(e) => setInput(e.target.value)}
+                                        className="w-full px-4 py-2 bg-black bg-opacity-50 border border-cyan-400 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                                        placeholder="Enter number..."
+                                    />
+                                </div>
+                                
+                                <div>
+                                    <label className="block text-gray-300 mb-2">Position:</label>
+                                    <input
+                                        type="number"
+                                        value={position}
+                                        onChange={(e) => setPosition(parseInt(e.target.value) || 0)}
+                                        className="w-full px-4 py-2 bg-black bg-opacity-50 border border-purple-400 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-400"
+                                        min="0"
+                                        max={list.length}
+                                    />
+                                </div>
+                                
+                                <div className="space-y-2">
+                                    <button
+                                        onClick={insertAtBeginning}
+                                        disabled={isAnimating}
+                                        className="ripple w-full bg-gradient-to-r from-green-500 to-cyan-500 text-white px-4 py-2 rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-300 disabled:opacity-50"
+                                    >
+                                        <i className="fas fa-plus mr-2"></i>Insert at Begin
+                                    </button>
+                                    <button
+                                        onClick={insertAtEnd}
+                                        disabled={isAnimating}
+                                        className="ripple w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white px-4 py-2 rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-300 disabled:opacity-50"
+                                    >
+                                        <i className="fas fa-plus mr-2"></i>Insert at End
+                                    </button>
+                                    <button
+                                        onClick={insertAtPosition}
+                                        disabled={isAnimating}
+                                        className="ripple w-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-4 py-2 rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-300 disabled:opacity-50"
+                                    >
+                                        <i className="fas fa-crosshairs mr-2"></i>Insert at Position
+                                    </button>
+                                    <button
+                                        onClick={deleteByValue}
+                                        disabled={isAnimating}
+                                        className="ripple w-full bg-gradient-to-r from-red-500 to-pink-500 text-white px-4 py-2 rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-300 disabled:opacity-50"
+                                    >
+                                        <i className="fas fa-trash mr-2"></i>Delete Value
+                                    </button>
+                                    <button
+                                        onClick={() => search(input)}
+                                        className="ripple w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-4 py-2 rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-300"
+                                    >
+                                        <i className="fas fa-search mr-2"></i>Search
+                                    </button>
+                                    <button
+                                        onClick={clear}
+                                        className="ripple w-full bg-gradient-to-r from-gray-500 to-gray-700 text-white px-4 py-2 rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-300"
+                                    >
+                                        <i className="fas fa-broom mr-2"></i>Clear
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* List Visualization */}
+                        <div className="lg:col-span-2 glass-morphism rounded-xl p-6 hover-scale">
+                            <h3 className="text-xl font-semibold text-yellow-300 mb-4">List Visualization</h3>
+                            
+                            <div className="relative overflow-x-auto">
+                                {list.length === 0 ? (
+                                    <div className="text-center text-gray-400 py-20">
+                                        <i className="fas fa-list text-6xl mb-4 opacity-50"></i>
+                                        <p>List is empty. Add some nodes!</p>
+                                    </div>
+                                ) : (
+                                    <div className="flex items-center space-x-4 p-4">
+                                        {list.map((node, index) => (
+                                            <React.Fragment key={node.id}>
+                                                <div
+                                                    className={`node relative bg-gradient-to-r from-cyan-400 to-purple-500 rounded-lg px-6 py-4 text-white font-bold border-2 ${
+                                                        highlightedNode === index 
+                                                            ? 'border-yellow-400 neon-glow animate-pulse-custom' 
+                                                            : 'border-cyan-300'
+                                                    } ${isAnimating && index === 0 ? 'animate-bounce-custom' : ''}`}
+                                                >
+                                                    <div className="text-center">
+                                                        <div className="text-lg">{node.value}</div>
+                                                        <div className="text-xs text-cyan-200">Node {index}</div>
+                                                    </div>
+                                                </div>
+                                                
+                                                {index < list.length - 1 && (
+                                                    <div className="relative">
+                                                        <div className="arrow bg-gradient-to-r from-cyan-400 to-purple-500"></div>
+                                                    </div>
+                                                )}
+                                            </React.Fragment>
+                                        ))}
+                                        
+                                        <div className="text-gray-400 font-bold bg-black bg-opacity-50 px-3 py-2 rounded-lg border border-gray-600">
+                                            NULL
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                            
+                            <div className="mt-4 text-center text-gray-300">
+                                Length: <span className="text-cyan-400 font-bold">{list.length}</span> nodes
+                            </div>
+                        </div>
+
+                        {/* Status & History */}
+                        <div className="space-y-6">
+                            <div className="glass-morphism rounded-xl p-6 hover-scale">
+                                  <h3 className="text-xl font-semibold text-yellow-300 mb-5 ">Status</h3>
+                                <div className="space-y-2 text-sm">
+                                    <div className={`p-2 rounded ${list.length === 0 ? 'bg-blue-900 text-blue-300' : 'bg-green-900 text-green-300'}`}>
+                                        {list.length === 0 ? 'Empty List' : `${list.length} Nodes`}
+                                    </div>
+                                    <div className="p-2 rounded bg-purple-900 text-purple-300">
+                                        Dynamic Size
+                                    </div>
+                                </div>
+                                
+                                {message && (
+                                    <div className="mt-4 p-3 rounded-lg bg-cyan-900 bg-opacity-50 text-cyan-300 border border-cyan-400 animate-pulse-custom">
+                                        {message}
+                                    </div>
+                                )}
+                            </div>
+                            
+                            <div className="glass-morphism rounded-xl p-6 hover-scale">
+                                <h3 className="text-xl font-semibold text-purple-400 mb-4">Operation History</h3>
+                                <div className="max-h-48 overflow-y-auto space-y-1">
+                                    {history.slice(-10).reverse().map((operation, index) => (
+                                        <div key={index} className="text-sm text-gray-300 p-2 bg-black bg-opacity-30 rounded">
+                                            {operation}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // Queue Component
+        const QueueVisualizer = () => {
+            const [queue, setQueue] = useState([]);
+            const [input, setInput] = useState('');
+            const [maxSize, setMaxSize] = useState(10);
+            const [message, setMessage] = useState('');
+            const [isAnimating, setIsAnimating] = useState(false);
+            const [history, setHistory] = useState([]);
+            const [isCircular, setIsCircular] = useState(false);
+            const [front, setFront] = useState(-1);
+            const [rear, setRear] = useState(-1);
+
+            const showMessage = (msg, type = 'info') => {
+                setMessage(msg);
+                setTimeout(() => setMessage(''), 3000);
+            };
+
+            const enqueue = async () => {
+                if (input === '') {
+                    showMessage('Please enter a value!', 'error');
+                    return;
+                }
+                
+                if (queue.length >= maxSize) {
+                    showMessage('Queue Overflow! Queue is full.', 'error');
+                    return;
+                }
+
+                setIsAnimating(true);
+                const newElement = { value: parseInt(input), id: Date.now() };
+                
+                setQueue(prev => {
+                    const newQueue = [...prev, newElement];
+                    if (prev.length === 0) {
+                        setFront(0);
+                    }
+                    setRear(newQueue.length - 1);
+                    return newQueue;
+                });
+                
+                setHistory(prev => [...prev, `ENQUEUE: ${input}`]);
+                setInput('');
+                showMessage(`Enqueued ${input}`, 'success');
+                
+                setTimeout(() => setIsAnimating(false), 500);
+            };
+
+            const dequeue = async () => {
+                if (queue.length === 0) {
+                    showMessage('Queue Underflow! Queue is empty.', 'error');
+                    return;
+                }
+
+                setIsAnimating(true);
+                const dequeued = queue[0];
+                
+                setQueue(prev => {
+                    const newQueue = prev.slice(1);
+                    if (newQueue.length === 0) {
+                        setFront(-1);
+                        setRear(-1);
+                    } else {
+                        setRear(newQueue.length - 1);
+                    }
+                    return newQueue;
+                });
+                
+                setHistory(prev => [...prev, `DEQUEUE: ${dequeued.value}`]);
+                showMessage(`Dequeued ${dequeued.value}`, 'success');
+                
+                setTimeout(() => setIsAnimating(false), 500);
+            };
+
+            const peek = () => {
+                if (queue.length === 0) {
+                    showMessage('Queue is empty! Cannot peek.', 'error');
+                    return;
+                }
+                
+                showMessage(`Front element: ${queue[0].value}`, 'info');
+            };
+
+            const clear = () => {
+                setQueue([]);
+                setFront(-1);
+                setRear(-1);
+                setHistory(prev => [...prev, 'CLEAR: Queue cleared']);
+                showMessage('Queue cleared!', 'info');
+            };
+
+            return (
+                <div className="p-6 space-y-6">
+                    <div className="text-center mb-8">
+                        <h2 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent mb-4">Queue Visualizer</h2>
+                        <p className="text-gray-300 font-semibold">First In, First Out (FIFO) Data Structure</p>
+                    </div>
+
+                    <div className="grid lg:grid-cols-3 gap-6">
+                        {/* Controls */}
+                        <div className="glass-morphism rounded-xl p-6 hover-scale">
+                          <h3 className="text-xl font-semibold text-yellow-300 mb-5 ">Controls</h3>
+
+                            
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-gray-300 mb-2">Value to Enqueue:</label>
+                                    <input
+                                        type="number"
+                                        value={input}
+                                        onChange={(e) => setInput(e.target.value)}
+                                        onKeyPress={(e) => e.key === 'Enter' && enqueue()}
+                                        className="w-full px-4 py-2 bg-black bg-opacity-50 border border-cyan-400 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                                        placeholder="Enter number..."
+                                    />
+                                </div>
+                                
+                                <div>
+                                    <label className="block text-gray-300 mb-2">Max Size:</label>
+                                    <input
+                                        type="number"
+                                        value={maxSize}
+                                        onChange={(e) => setMaxSize(parseInt(e.target.value) || 10)}
+                                        className="w-full px-4 py-2 bg-black bg-opacity-50 border border-purple-400 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-400"
+                                        min="1"
+                                        max="20"
+                                    />
+                                </div>
+                                
+                                <div className="flex items-center space-x-2">
+                                    <input
+                                        type="checkbox"
+                                        id="circular"
+                                        checked={isCircular}
+                                        onChange={(e) => setIsCircular(e.target.checked)}
+                                        className="rounded"
+                                    />
+                                    <label htmlFor="circular" className="text-gray-300">Circular Queue</label>
+                                </div>
+                                
+                                <div className="grid grid-cols-2 gap-2">
+                                    <button
+                                        onClick={enqueue}
+                                        disabled={isAnimating}
+                                        className="ripple bg-gradient-to-r from-green-500 to-cyan-500 text-white px-4 py-2 rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-300 disabled:opacity-50"
+                                    >
+                                        <i className="fas fa-plus mr-2"></i>Enqueue
+                                    </button>
+                                    <button
+                                        onClick={dequeue}
+                                        disabled={isAnimating}
+                                        className="ripple bg-gradient-to-r from-red-500 to-pink-500 text-white px-4 py-2 rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-300 disabled:opacity-50"
+                                    >
+                                        <i className="fas fa-minus mr-2"></i>Dequeue
+                                    </button>
+                                </div>
+                                
+                                <div className="grid grid-cols-2 gap-2">
+                                    <button
+                                        onClick={peek}
+                                        className="ripple bg-gradient-to-r from-blue-500 to-purple-500 text-white px-4 py-2 rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-300"
+                                    >
+                                        <i className="fas fa-eye mr-2"></i>Peek
+                                    </button>
+                                    <button
+                                        onClick={clear}
+                                        className="ripple bg-gradient-to-r from-gray-500 to-gray-700 text-white px-4 py-2 rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-300"
+                                    >
+                                        <i className="fas fa-trash mr-2"></i>Clear
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Queue Visualization */}
+                        <div className="glass-morphism rounded-xl p-6 hover-scale">
+                            <h3 className="text-xl font-semibold text-yellow-300 mb-4">Queue Visualization</h3>
+                            
+                            <div className="relative">
+                                {queue.length === 0 ? (
+                                    <div className="text-center text-gray-400 py-20">
+                                        <i className="fas fa-list-ol text-6xl mb-4 opacity-50"></i>
+                                        <p>Queue is empty. Add some elements!</p>
+                                    </div>
+                                ) : (
+                                    <div className={`flex items-center space-x-2 p-4 ${isCircular ? 'justify-center' : 'justify-start'} min-h-32 overflow-x-auto`}>
+                                        {!isCircular && (
+                                            <div className="text-red-300 font-bold bg-black bg-opacity-70 px-2 py-1 rounded-lg whitespace-nowrap">
+                                                FRONT<br/><i className="fas fa-arrow-right"></i>
+                                            </div>
+                                        )}
+                                        
+                                        {queue.map((element, index) => (
+                                            <div
+                                                key={element.id}
+                                                className={`queue-element w-16 h-16 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-lg flex items-center justify-center text-white font-bold border-2 border-cyan-300 ${
+                                                    index === 0 ? 'animate-pulse-custom neon-glow' : ''
+                                                } ${isAnimating && (index === 0 || index === queue.length - 1) ? 'animate-bounce-custom' : ''}`}
+                                                style={{
+                                                    transform: isCircular 
+                                                        ? `rotate(${(index * 360) / maxSize}deg) translateX(80px) rotate(-${(index * 360) / maxSize}deg)`
+                                                        : 'none'
+                                                }}
+                                            >
+                                                {element.value}
+                                            </div>
+                                        ))}
+                                        
+                                        {!isCircular && (
+                                            <div className="text-purple-400 font-bold bg-black bg-opacity-70 px-2 py-1 rounded-lg whitespace-nowrap">
+                                                <i className="fas fa-arrow-left"></i><br/>REAR
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                            
+                            <div className="mt-4 text-center">
+                                <div className="text-gray-300">
+                                    Size: <span className="text-cyan-400 font-bold">{queue.length}</span> / {maxSize}
+                                </div>
+                                <div className="text-sm text-gray-400 mt-2">
+                                    Front: {front} | Rear: {rear}
+                                </div>
+                                <div className="w-full bg-gray-700 rounded-full h-2 mt-2">
+                                    <div 
+                                        className="bg-gradient-to-r from-cyan-400 to-purple-500 h-2 rounded-full transition-all duration-500"
+                                        style={{ width: `${(queue.length / maxSize) * 100}%` }}
+                                    ></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Status & History */}
+                        <div className="space-y-6">
+                            <div className="glass-morphism rounded-xl p-6 hover-scale">
+                                  <h3 className="text-xl font-semibold text-yellow-300 mb-5 ">Status</h3>
+                                <div className="space-y-2 text-sm">
+                                    <div className={`p-2 rounded ${queue.length === 0 ? 'bg-blue-900 text-blue-300' : 'bg-green-900 text-green-300'}`}>
+                                        {queue.length === 0 ? 'Empty' : 'Has Elements'}
+                                    </div>
+                                    <div className={`p-2 rounded ${queue.length >= maxSize ? 'bg-red-900 text-red-300' : 'bg-green-900 text-green-300'}`}>
+                                        {queue.length >= maxSize ? 'Full' : 'Space Available'}
+                                    </div>
+                                    <div className={`p-2 rounded ${isCircular ? 'bg-purple-900 text-purple-300' : 'bg-blue-900 text-blue-300'}`}>
+                                        {isCircular ? 'Circular Mode' : 'Linear Mode'}
+                                    </div>
+                                </div>
+                                
+                                {message && (
+                                    <div className="mt-4 p-3 rounded-lg bg-cyan-900 bg-opacity-50 text-cyan-300 border border-cyan-400 animate-pulse-custom">
+                                        {message}
+                                    </div>
+                                )}
+                            </div>
+                            
+                            <div className="glass-morphism rounded-xl p-6 hover-scale">
+                                <h3 className="text-xl font-semibold text-purple-400 mb-4">Operation History</h3>
+                                <div className="max-h-48 overflow-y-auto space-y-1">
+                                    {history.slice(-10).reverse().map((operation, index) => (
+                                        <div key={index} className="text-sm text-gray-300 p-2 bg-black bg-opacity-30 rounded">
+                                            {operation}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // Main App Component
+        const App = () => {
+            const [activeSection, setActiveSection] = useState('stack');
+            const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+            const renderActiveSection = () => {
+                switch (activeSection) {
+                    case 'stack':
+                        return <StackVisualizer />;
+                    case 'linkedlist':
+                        return <LinkedListVisualizer />;
+                    case 'queue':
+                        return <QueueVisualizer />;
+                    default:
+                        return <StackVisualizer />;
+                }
+            };
+
+            return (
+                <div className="min-h-screen relative">
+                    <ParticleBackground />
+                    
+                    <Navigation 
+                        activeSection={activeSection}
+                        setActiveSection={setActiveSection}
+                        isMobileMenuOpen={isMobileMenuOpen}
+                        setIsMobileMenuOpen={setIsMobileMenuOpen}
+                    />
+                    
+                    <main className="pt-16 relative z-10">
+                        <div className="animate-slide-in">
+                            {renderActiveSection()}
+                        </div>
+                    </main>
+                    
+                    <footer className="glass-morphism mt-16 p-6 text-center text-gray-300 relative z-10">
+                        <p className="flex items-center justify-center space-x-2">
+                            <i className="fas fa-heart text-red-400"></i>
+                            <span>Built with React & Tailwind CSS</span>
+                            <i className="fas fa-code text-cyan-400"></i>
+                        </p>
+                    </footer>
+                </div>
+            );
+        };
+
+        // Render the app
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
